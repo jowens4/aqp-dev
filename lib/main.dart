@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:navi_app/login.dart';
-import 'package:navi_app/my_app_bar.dart';
 import 'package:provider/provider.dart';
 import 'auth_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:aqp_dev/login.dart';
+import 'package:aqp_dev/dogbones.dart';
 
-enum AppScreen { login, home, details, data }
+enum TopLevelModules { login, home, dashboard, dogbones, data }
+
+enum DogboneModules { post, get, view }
 
 bool logged = false;
 
@@ -29,9 +31,9 @@ class MyAppContent extends StatelessWidget {
   }
 }
 
-class AppRouterDelegate extends RouterDelegate<AppScreen>
-    with ChangeNotifier, PopNavigatorRouterDelegateMixin<AppScreen> {
-  AppScreen _screen = AppScreen.home;
+class AppRouterDelegate extends RouterDelegate<TopLevelModules>
+    with ChangeNotifier, PopNavigatorRouterDelegateMixin<TopLevelModules> {
+  TopLevelModules _screen = TopLevelModules.home;
 
   @override
   Widget build(BuildContext context) {
@@ -40,11 +42,11 @@ class AppRouterDelegate extends RouterDelegate<AppScreen>
           title: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Text('title'),
+          Text('Avid Quality Process'),
           IconButton(
             icon: Icon(Icons.login),
             onPressed: () {
-              _setNewRoutePath(AppScreen.login);
+              _setNewRoutePath(TopLevelModules.login);
               //Navigator.pop(context);
             },
             tooltip: 'login',
@@ -52,7 +54,7 @@ class AppRouterDelegate extends RouterDelegate<AppScreen>
           IconButton(
             icon: Icon(Icons.home),
             onPressed: () {
-              _setNewRoutePath(AppScreen.home);
+              _setNewRoutePath(TopLevelModules.home);
               //Navigator.pop(context);
             },
             tooltip: 'home',
@@ -60,20 +62,19 @@ class AppRouterDelegate extends RouterDelegate<AppScreen>
           IconButton(
             icon: Icon(Icons.info),
             onPressed: () {
-              _setNewRoutePath(AppScreen.details);
+              _setNewRoutePath(TopLevelModules.dogbones);
             },
-            tooltip: 'details',
+            tooltip: 'dogbones',
           ),
           IconButton(
             icon: Icon(Icons.data_array),
             onPressed: () {
-              _setNewRoutePath(AppScreen.data);
+              _setNewRoutePath(TopLevelModules.data);
             },
             tooltip: "idea",
           ),
         ],
       )),
-      drawer: Drawer(),
       body: Navigator(
         key: navigatorKey,
         pages: [
@@ -81,17 +82,17 @@ class AppRouterDelegate extends RouterDelegate<AppScreen>
             key: ValueKey('HomeScreen'),
             child: HomeScreen(),
           ),
-          if (_screen == AppScreen.login)
+          if (_screen == TopLevelModules.login)
             MaterialPage(
               key: ValueKey('LoginScreen'),
               child: LoginScreen(),
             ),
-          if (_screen == AppScreen.details)
+          if (_screen == TopLevelModules.dogbones)
             MaterialPage(
-              key: ValueKey('DetailsScreen'),
-              child: DetailScreen(),
+              key: ValueKey('dogbonesScreen'),
+              child: DogboneScreen(),
             ),
-          if (_screen == AppScreen.data)
+          if (_screen == TopLevelModules.data)
             MaterialPage(
               key: ValueKey('DataScreen'),
               child: DataScreen(),
@@ -105,7 +106,7 @@ class AppRouterDelegate extends RouterDelegate<AppScreen>
     );
   }
 
-  void _setNewRoutePath(AppScreen configuration) {
+  void _setNewRoutePath(TopLevelModules configuration) {
     logged = true;
     if (logged) {
       if (_screen != configuration) {
@@ -113,16 +114,16 @@ class AppRouterDelegate extends RouterDelegate<AppScreen>
         notifyListeners();
       }
     } else {
-      _screen = AppScreen.login;
+      _screen = TopLevelModules.login;
       notifyListeners();
     }
   }
 
   @override
-  AppScreen get currentConfiguration => _screen;
+  TopLevelModules get currentConfiguration => _screen;
 
   @override
-  Future<void> setNewRoutePath(AppScreen configuration) async {
+  Future<void> setNewRoutePath(TopLevelModules configuration) async {
     _setNewRoutePath(configuration);
   }
 
@@ -130,34 +131,35 @@ class AppRouterDelegate extends RouterDelegate<AppScreen>
   GlobalKey<NavigatorState>? get navigatorKey => GlobalKey<NavigatorState>();
 }
 
-class AppRouteInformationParser extends RouteInformationParser<AppScreen> {
+class AppRouteInformationParser
+    extends RouteInformationParser<TopLevelModules> {
   @override
-  Future<AppScreen> parseRouteInformation(
+  Future<TopLevelModules> parseRouteInformation(
       RouteInformation routeInformation) async {
     switch (routeInformation.uri.path) {
       case 'login':
-        return AppScreen.login;
+        return TopLevelModules.login;
       case '/':
-        return AppScreen.home;
-      case '/details':
-        return AppScreen.details;
+        return TopLevelModules.home;
+      case '/dogbones':
+        return TopLevelModules.dogbones;
       case '/data':
-        return AppScreen.data;
+        return TopLevelModules.data;
       default:
-        return AppScreen.home;
+        return TopLevelModules.home;
     }
   }
 
   @override
-  RouteInformation restoreRouteInformation(AppScreen configuration) {
+  RouteInformation restoreRouteInformation(TopLevelModules configuration) {
     switch (configuration) {
-      case AppScreen.login:
+      case TopLevelModules.login:
         return RouteInformation(uri: Uri.parse('/login'));
-      case AppScreen.home:
+      case TopLevelModules.home:
         return RouteInformation(uri: Uri.parse('/'));
-      case AppScreen.details:
-        return RouteInformation(uri: Uri.parse('/details'));
-      case AppScreen.data:
+      case TopLevelModules.dogbones:
+        return RouteInformation(uri: Uri.parse('/dogbones'));
+      case TopLevelModules.data:
         return RouteInformation(uri: Uri.parse('/data'));
       default:
         return RouteInformation(uri: Uri.parse('/'));
@@ -246,52 +248,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class DetailScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: SizedBox(
-                  height: 400,
-                  child: ListView.builder(
-                    itemCount: AppScreen.values.length,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.hail),
-                            onPressed: () {
-                              // /_setNewRoutePath(AppScreen.details);
-                            },
-                            tooltip: 'details',
-                          ),
-                          ListTile(
-                            title: Text('${AppScreen.values[index]}'),
-                          ),
-                          Divider(
-                            height: 1,
-                            color: Colors.grey,
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
-              ),
-              Placeholder(),
-            ],
-          ),
-        ],
       ),
     );
   }

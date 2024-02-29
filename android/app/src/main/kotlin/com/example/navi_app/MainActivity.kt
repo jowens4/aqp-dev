@@ -1,4 +1,4 @@
-package com.example.navi_app
+package com.example.aqp_dev
 
 import io.flutter.embedding.android.FlutterActivity
 
