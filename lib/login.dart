@@ -1,54 +1,223 @@
 import 'package:flutter/material.dart';
-import 'package:aqp_dev/main.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginScreen extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
-String user = 'jacob';
-String pwd = 'jacob';
-
-class _LoginPageState extends State<LoginPage> {
-  TextEditingController _usernameController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+class _LoginScreenState extends State<LoginScreen> {
+  final PageController _pageController = PageController();
+  int _selectedPageIndex = 0; // Default selected option is sign-in
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _usernameController,
-              decoration: InputDecoration(labelText: 'Username'),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text('Login Page'),
+      ),
+      body: Row(
+        children: [
+          // Left side: List of options with borders
+          Container(
+            width: 200,
+            decoration: BoxDecoration(
+              border: Border(
+                right: BorderSide(color: Colors.grey),
+              ),
             ),
-            SizedBox(height: 16.0),
-            TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: InputDecoration(labelText: 'Password'),
+            child: ListView(
+              children: [
+                ListTile(
+                  title: Text('Sign in'),
+                  onTap: () {
+                    _navigateToPage(0);
+                  },
+                  selected: _selectedPageIndex == 0,
+                ),
+                Divider(),
+                ListTile(
+                  title: Text('Sign up'),
+                  onTap: () {
+                    _navigateToPage(1);
+                  },
+                  selected: _selectedPageIndex == 1,
+                ),
+                Divider(),
+                ListTile(
+                  title: Text('Forgot Password?'),
+                  onTap: () {
+                    _navigateToPage(2);
+                  },
+                  selected: _selectedPageIndex == 2,
+                ),
+              ],
             ),
-            SizedBox(height: 32.0),
-            ElevatedButton(
-              onPressed: () {
-                // Implement your login logic here
-                String username = _usernameController.text;
-                String password = _passwordController.text;
-                // Add your authentication logic here
-                // For simplicity, let's just print the values for now
-                print('Username: $username');
-                print('Password: $password');
-                if (username == user && password == pwd) {
-                  logged = true;
-                }
-              },
-              child: Text('Login'),
+          ),
+          // Right side: Display content based on selected option with borders
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  left: BorderSide(color: Colors.grey),
+                ),
+              ),
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: (index) {
+                  setState(() {
+                    _selectedPageIndex = index;
+                  });
+                },
+                children: [
+                  SigninPage(),
+                  SignupPage(),
+                  ForgotPage(),
+                ],
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _navigateToPage(int pageIndex) {
+    _pageController.animateToPage(
+      pageIndex,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+}
+
+class SigninPage extends StatelessWidget {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "Sign in",
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 16),
+          // Text fields for email and password
+          TextField(
+            controller: emailController,
+            decoration: InputDecoration(
+              labelText: 'Email',
+            ),
+          ),
+          SizedBox(height: 16),
+          TextField(
+            controller: passwordController,
+            obscureText: true,
+            decoration: InputDecoration(
+              labelText: 'Password',
+            ),
+          ),
+          SizedBox(height: 16),
+          // Button to trigger login action
+          ElevatedButton(
+            onPressed: () {
+              // Add your login logic here
+              print('Email: ${emailController.text}');
+              print('Password: ${passwordController.text}');
+            },
+            child: Text('Login'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SignupPage extends StatelessWidget {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "Sign up",
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 16),
+          // Text fields for email and password
+          TextField(
+            controller: emailController,
+            decoration: InputDecoration(
+              labelText: 'Email',
+            ),
+          ),
+          SizedBox(height: 16),
+          TextField(
+            controller: passwordController,
+            obscureText: true,
+            decoration: InputDecoration(
+              labelText: 'Password',
+            ),
+          ),
+          SizedBox(height: 16),
+          // Button to trigger login action
+          ElevatedButton(
+            onPressed: () {
+              // Add your login logic here
+              print('Email: ${emailController.text}');
+              print('Password: ${passwordController.text}');
+            },
+            child: Text('Register'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ForgotPage extends StatelessWidget {
+  TextEditingController emailController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "Recover Password",
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 16),
+          // Text fields for email and password
+          TextField(
+            controller: emailController,
+            decoration: InputDecoration(
+              labelText: 'Email',
+            ),
+          ),
+          SizedBox(height: 16),
+
+          // Button to trigger login action
+          ElevatedButton(
+            onPressed: () {
+              // Add your login logic here
+              print('Email: ${emailController.text}');
+            },
+            child: Text('Submit'),
+          ),
+        ],
       ),
     );
   }
