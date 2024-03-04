@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'auth_service.dart';
 
 import 'package:aqp_dev/login.dart';
-import 'package:aqp_dev/dogbones.dart';
+import 'package:aqp_dev/dogbones_page.dart';
 import 'package:aqp_dev/home.dart';
 
 enum TopLevelModules { login, home, dashboard, dogbones, data }
@@ -62,7 +62,7 @@ class AppRouterDelegate extends RouterDelegate<TopLevelModules>
             tooltip: 'home',
           ),
           IconButton(
-            icon: Icon(Icons.info),
+            icon: Icon(Icons.checklist_rounded),
             onPressed: () {
               _setNewRoutePath(TopLevelModules.dogbones);
             },
@@ -109,7 +109,6 @@ class AppRouterDelegate extends RouterDelegate<TopLevelModules>
   }
 
   void _setNewRoutePath(TopLevelModules configuration) {
-    logged = true;
     if (logged) {
       if (_screen != configuration) {
         _screen = configuration;

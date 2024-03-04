@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -8,72 +6,218 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-
-  Future<void> createUser(String email, String password) async {
-    final String apiUrl = 'http://aqp:8080/users/';
-
-    Map<String, String> requestBody = {
-      'email': email,
-      'password': password,
-    };
-
-    try {
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: <String, String>{
-          'accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(requestBody),
-      );
-
-      if (response.statusCode == 200) {
-        print("User created successfully");
-      } else {
-        print("Error creating user. Status code: ${response.statusCode}");
-        print("Response body: ${response.body}");
-      }
-    } catch (e) {
-      print("Error during POST request: $e");
-    }
-  }
+  final PageController _pageController = PageController();
+  int _selectedPageIndex = 0; // Default selected option is sign-in
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Flutter POST Request"),
+        automaticallyImplyLeading: false,
+        title: Text('Home Page'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: emailController,
-              decoration: InputDecoration(
-                labelText: 'Email',
+      body: Row(
+        children: [
+          // Left side: List of options with borders
+          Container(
+            width: 200,
+            decoration: BoxDecoration(
+              border: Border(
+                right: BorderSide(color: Colors.grey),
               ),
             ),
-            SizedBox(height: 16.0),
-            TextField(
-              controller: passwordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: 'Password',
+            child: ListView(
+              children: [
+                ListTile(
+                  title: Text('Home 1'),
+                  onTap: () {
+                    _navigateToPage(0);
+                  },
+                  selected: _selectedPageIndex == 0,
+                ),
+                Divider(),
+                ListTile(
+                  title: Text('Home 2'),
+                  onTap: () {
+                    _navigateToPage(1);
+                  },
+                  selected: _selectedPageIndex == 1,
+                ),
+                Divider(),
+                ListTile(
+                  title: Text('Home 3'),
+                  onTap: () {
+                    _navigateToPage(2);
+                  },
+                  selected: _selectedPageIndex == 2,
+                ),
+              ],
+            ),
+          ),
+          // Right side: Display content based on selected option with borders
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  left: BorderSide(color: Colors.grey),
+                ),
+              ),
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: (index) {
+                  setState(() {
+                    _selectedPageIndex = index;
+                  });
+                },
+                children: [
+                  SigninPage(),
+                  SignupPage(),
+                  ForgotPage(),
+                ],
               ),
             ),
-            SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                createUser(emailController.text, passwordController.text);
-              },
-              child: Icon(Icons.send),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _navigateToPage(int pageIndex) {
+    _pageController.animateToPage(
+      pageIndex,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+}
+
+class SigninPage extends StatelessWidget {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "Sign in",
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 16),
+          // Text fields for email and password
+          TextField(
+            controller: emailController,
+            decoration: InputDecoration(
+              labelText: 'Email',
             ),
-          ],
-        ),
+          ),
+          SizedBox(height: 16),
+          TextField(
+            controller: passwordController,
+            obscureText: true,
+            decoration: InputDecoration(
+              labelText: 'Password',
+            ),
+          ),
+          SizedBox(height: 16),
+          // Button to trigger login action
+          ElevatedButton(
+            onPressed: () {
+              // Add your login logic here
+              print('Email: ${emailController.text}');
+              print('Password: ${passwordController.text}');
+            },
+            child: Text('Login'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SignupPage extends StatelessWidget {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "Sign up",
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 16),
+          // Text fields for email and password
+          TextField(
+            controller: emailController,
+            decoration: InputDecoration(
+              labelText: 'Email',
+            ),
+          ),
+          SizedBox(height: 16),
+          TextField(
+            controller: passwordController,
+            obscureText: true,
+            decoration: InputDecoration(
+              labelText: 'Password',
+            ),
+          ),
+          SizedBox(height: 16),
+          // Button to trigger login action
+          ElevatedButton(
+            onPressed: () {
+              // Add your login logic here
+              print('Email: ${emailController.text}');
+              print('Password: ${passwordController.text}');
+            },
+            child: Text('Register'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ForgotPage extends StatelessWidget {
+  TextEditingController emailController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "Recover Password",
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 16),
+          // Text fields for email and password
+          TextField(
+            controller: emailController,
+            decoration: InputDecoration(
+              labelText: 'Email',
+            ),
+          ),
+          SizedBox(height: 16),
+
+          // Button to trigger login action
+          ElevatedButton(
+            onPressed: () {
+              // Add your login logic here
+              print('Email: ${emailController.text}');
+            },
+            child: Text('Submit'),
+          ),
+        ],
       ),
     );
   }

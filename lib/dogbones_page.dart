@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:aqp_dev/enter_dogbones_page.dart';
+import 'package:aqp_dev/review_dogbones_page.dart';
 
 class DogboneScreen extends StatefulWidget {
   @override
@@ -7,19 +9,20 @@ class DogboneScreen extends StatefulWidget {
 
 class _DogboneScreenState extends State<DogboneScreen> {
   final PageController _pageController = PageController();
+  int _selectedPageIndex = 0; // Default selected option is sign-in
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text('Dogbones'),
+        title: Text('Dogbone Page'),
       ),
       body: Row(
         children: [
           // Left side: List of options with borders
           Container(
-            width: 200, // Adjust the width as needed
+            width: 200,
             decoration: BoxDecoration(
               border: Border(
                 right: BorderSide(color: Colors.grey),
@@ -28,25 +31,21 @@ class _DogboneScreenState extends State<DogboneScreen> {
             child: ListView(
               children: [
                 ListTile(
-                  title: Text('Post'),
+                  title: Text('Enter Dogbones'),
                   onTap: () {
                     _navigateToPage(0);
                   },
-                ),
-                Divider(), // Add a divider for visual separation
-                ListTile(
-                  title: Text('Get'),
-                  onTap: () {
-                    _navigateToPage(1);
-                  },
+                  selected: _selectedPageIndex == 0,
                 ),
                 Divider(),
                 ListTile(
-                  title: Text('View'),
+                  title: Text('Review Dogbones'),
                   onTap: () {
-                    _navigateToPage(2);
+                    _navigateToPage(1);
                   },
+                  selected: _selectedPageIndex == 1,
                 ),
+                Divider(),
               ],
             ),
           ),
@@ -61,21 +60,13 @@ class _DogboneScreenState extends State<DogboneScreen> {
               child: PageView(
                 controller: _pageController,
                 onPageChanged: (index) {
-                  setState(() {});
+                  setState(() {
+                    _selectedPageIndex = index;
+                  });
                 },
                 children: [
-                  DogbonePage(
-                    title: 'Post Module',
-                    content: 'Post module content.',
-                  ),
-                  DogbonePage(
-                    title: 'Get Module',
-                    content: 'Get module content.',
-                  ),
-                  DogbonePage(
-                    title: 'View Module',
-                    content: 'View module content.',
-                  ),
+                  EnterDogbonesPage(),
+                  ReviewDogbonesPage(),
                 ],
               ),
             ),
@@ -90,34 +81,6 @@ class _DogboneScreenState extends State<DogboneScreen> {
       pageIndex,
       duration: Duration(milliseconds: 300),
       curve: Curves.easeInOut,
-    );
-  }
-}
-
-class DogbonePage extends StatelessWidget {
-  final String title;
-  final String content;
-
-  DogbonePage({required this.title, required this.content});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            title,
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 16),
-          Text(
-            content,
-            style: TextStyle(fontSize: 18),
-          ),
-        ],
-      ),
     );
   }
 }
