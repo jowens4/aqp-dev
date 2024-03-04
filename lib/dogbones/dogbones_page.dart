@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:aqp_dev/dogbones/enter_dogbones_page.dart';
+import 'package:aqp_dev/dogbones/review_dogbones_page.dart';
 
-class HomeScreen extends StatefulWidget {
+class DogboneScreen extends StatefulWidget {
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _DogboneScreenState createState() => _DogboneScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _DogboneScreenState extends State<DogboneScreen> {
   final PageController _pageController = PageController();
   int _selectedPageIndex = 0; // Default selected option is sign-in
 
@@ -14,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text('Home Page'),
+        title: Text('Dogbone Page'),
       ),
       body: Row(
         children: [
@@ -29,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: ListView(
               children: [
                 ListTile(
-                  title: Text('Home 1'),
+                  title: Text('Enter Dogbones'),
                   onTap: () {
                     _navigateToPage(0);
                   },
@@ -37,20 +39,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 Divider(),
                 ListTile(
-                  title: Text('Home 2'),
+                  title: Text('Review Dogbones'),
                   onTap: () {
                     _navigateToPage(1);
                   },
                   selected: _selectedPageIndex == 1,
                 ),
                 Divider(),
-                ListTile(
-                  title: Text('Home 3'),
-                  onTap: () {
-                    _navigateToPage(2);
-                  },
-                  selected: _selectedPageIndex == 2,
-                ),
               ],
             ),
           ),
@@ -70,8 +65,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   });
                 },
                 children: [
-                  Placeholder(),
-                  Placeholder(),
+                  EnterDogbonesPage(),
+                  ReviewDogbonesPage(),
                 ],
               ),
             ),

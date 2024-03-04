@@ -1,0 +1,1 @@
+curl -X 'POST' \'http://aqp:8080/create_user/' \ -H 'accept: application/json' \ -H 'Content-Type: application/json' \ -d '{"email": "s1", "password": "s1"}'

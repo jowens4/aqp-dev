@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:aqp_dev/enter_dogbones_page.dart';
-import 'package:aqp_dev/review_dogbones_page.dart';
 
-class DogboneScreen extends StatefulWidget {
+import 'package:aqp_dev/login/signin_page.dart';
+import 'package:aqp_dev/login/signup_page.dart';
+import 'package:aqp_dev/login/forgot_page.dart';
+
+class LoginScreen extends StatefulWidget {
   @override
-  _DogboneScreenState createState() => _DogboneScreenState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _DogboneScreenState extends State<DogboneScreen> {
+class _LoginScreenState extends State<LoginScreen> {
   final PageController _pageController = PageController();
   int _selectedPageIndex = 0; // Default selected option is sign-in
 
@@ -16,7 +18,7 @@ class _DogboneScreenState extends State<DogboneScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text('Dogbone Page'),
+        title: Text('Login Page'),
       ),
       body: Row(
         children: [
@@ -31,7 +33,7 @@ class _DogboneScreenState extends State<DogboneScreen> {
             child: ListView(
               children: [
                 ListTile(
-                  title: Text('Enter Dogbones'),
+                  title: Text('Sign in'),
                   onTap: () {
                     _navigateToPage(0);
                   },
@@ -39,13 +41,20 @@ class _DogboneScreenState extends State<DogboneScreen> {
                 ),
                 Divider(),
                 ListTile(
-                  title: Text('Review Dogbones'),
+                  title: Text('Sign up'),
                   onTap: () {
                     _navigateToPage(1);
                   },
                   selected: _selectedPageIndex == 1,
                 ),
                 Divider(),
+                ListTile(
+                  title: Text('Forgot Password?'),
+                  onTap: () {
+                    _navigateToPage(2);
+                  },
+                  selected: _selectedPageIndex == 2,
+                ),
               ],
             ),
           ),
@@ -65,8 +74,9 @@ class _DogboneScreenState extends State<DogboneScreen> {
                   });
                 },
                 children: [
-                  EnterDogbonesPage(),
-                  ReviewDogbonesPage(),
+                  SigninPage(),
+                  SignupPage(),
+                  ForgotPage(),
                 ],
               ),
             ),

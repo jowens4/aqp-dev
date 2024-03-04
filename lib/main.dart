@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'auth_service.dart';
 
-import 'package:aqp_dev/login.dart';
-import 'package:aqp_dev/dogbones_page.dart';
+import 'package:aqp_dev/login/login.dart';
+import 'package:aqp_dev/dogbones/dogbones_page.dart';
 import 'package:aqp_dev/home.dart';
 
 enum TopLevelModules { login, home, dashboard, dogbones, data }
@@ -46,7 +46,7 @@ class AppRouterDelegate extends RouterDelegate<TopLevelModules>
         children: [
           Text('Avid Quality Process'),
           IconButton(
-            icon: Icon(Icons.login),
+            icon: Icon(Icons.login_rounded),
             onPressed: () {
               _setNewRoutePath(TopLevelModules.login);
               //Navigator.pop(context);
@@ -54,7 +54,7 @@ class AppRouterDelegate extends RouterDelegate<TopLevelModules>
             tooltip: 'login',
           ),
           IconButton(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.dashboard_rounded),
             onPressed: () {
               _setNewRoutePath(TopLevelModules.home);
               //Navigator.pop(context);
@@ -67,13 +67,6 @@ class AppRouterDelegate extends RouterDelegate<TopLevelModules>
               _setNewRoutePath(TopLevelModules.dogbones);
             },
             tooltip: 'dogbones',
-          ),
-          IconButton(
-            icon: Icon(Icons.data_array),
-            onPressed: () {
-              _setNewRoutePath(TopLevelModules.data);
-            },
-            tooltip: "idea",
           ),
         ],
       )),
@@ -109,6 +102,7 @@ class AppRouterDelegate extends RouterDelegate<TopLevelModules>
   }
 
   void _setNewRoutePath(TopLevelModules configuration) {
+    logged = true;
     if (logged) {
       if (_screen != configuration) {
         _screen = configuration;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:aqp_dev/dogbone.dart';
+import 'package:aqp_dev/dogbones/dogbone.dart';
 
 class EnterDogbonesPage extends StatefulWidget {
   @override
