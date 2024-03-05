@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:aqp_dev/dogbones/dogbone.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class EnterDogbonesPage extends StatefulWidget {
   @override
@@ -8,6 +10,50 @@ class EnterDogbonesPage extends StatefulWidget {
 
 class _EnterDogbonesPageState extends State<EnterDogbonesPage> {
   List<DogboneData> dogbonesData = []; // List to store data for each dog bone
+
+  Future<void> createDogbone(
+    String id,
+    String timestamp,
+    String number,
+    String note,
+    String length,
+    String width,
+    String thickness,
+    String file,
+  ) async {
+    const String apiUrl = 'http://aqp:8080/dogbone/';
+
+    Map<String, String> requestBody = {
+      "id": id,
+      "timestamp": timestamp,
+      "number": number,
+      "note": note,
+      "length": length,
+      "width": width,
+      "thickness": thickness,
+      "files": file,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: <String, String>{
+          'accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(requestBody),
+      );
+
+      if (response.statusCode == 200) {
+        print("User created successfully");
+      } else {
+        print("Error creating user. Status code: ${response.statusCode}");
+        print("Response body: ${response.body}");
+      }
+    } catch (e) {
+      print("Error during POST request: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +94,15 @@ class _EnterDogbonesPageState extends State<EnterDogbonesPage> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  // Handle submit logic
-                  // You can access the data for each dog bone in the dogbonesData list
+                  createDogbone(
+                      dogbonesData[0].numberController.text,
+                      dogbonesData[0].numberController.text,
+                      dogbonesData[0].numberController.text,
+                      dogbonesData[0].noteController.text,
+                      dogbonesData[0].lengthController.text,
+                      dogbonesData[0].widthController.text,
+                      dogbonesData[0].thicknessController.text,
+                      dogbonesData[0].fileController.text);
                 },
                 child: Text('Submit'),
               ),
@@ -61,6 +114,7 @@ class _EnterDogbonesPageState extends State<EnterDogbonesPage> {
               itemBuilder: (context, index) {
                 return Dogbone(
                     numberController: dogbonesData[index].numberController,
+                    noteController: dogbonesData[index].noteController,
                     lengthController: dogbonesData[index].lengthController,
                     widthController: dogbonesData[index].widthController,
                     thicknessController:
@@ -80,6 +134,8 @@ class _EnterDogbonesPageState extends State<EnterDogbonesPage> {
 
 class DogboneData {
   TextEditingController numberController = TextEditingController();
+  TextEditingController noteController = TextEditingController();
+
   TextEditingController lengthController = TextEditingController();
   TextEditingController widthController = TextEditingController();
   TextEditingController thicknessController = TextEditingController();

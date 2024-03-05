@@ -7,7 +7,7 @@ class SignupPage extends StatelessWidget {
   final TextEditingController passwordController = TextEditingController();
 
   Future<void> createUser(String email, String password) async {
-    const String apiUrl = 'http://aqp:8080/create_user/';
+    const String apiUrl = 'http://aqp:8080/user/';
 
     Map<String, String> requestBody = {
       'email': email,

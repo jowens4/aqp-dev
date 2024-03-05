@@ -3,6 +3,7 @@ import 'package:file_picker/src/file_picker.dart';
 
 class Dogbone extends StatelessWidget {
   final TextEditingController numberController;
+  final TextEditingController noteController;
   final TextEditingController lengthController;
   final TextEditingController widthController;
   final TextEditingController thicknessController;
@@ -11,6 +12,7 @@ class Dogbone extends StatelessWidget {
 
   Dogbone({
     required this.numberController,
+    required this.noteController,
     required this.lengthController,
     required this.widthController,
     required this.thicknessController,
@@ -40,6 +42,23 @@ class Dogbone extends StatelessWidget {
                   decoration: InputDecoration(
                     hintText: 'Enter number',
                     labelText: 'Dogbone: ',
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: Container(
+                margin: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(10.0),
+                decoration:
+                    BoxDecoration(border: Border.all(color: Colors.grey)),
+                child: TextField(
+                  controller: noteController,
+                  keyboardType: TextInputType.multiline,
+                  decoration: InputDecoration(
+                    hintText: 'Notes',
+                    labelText: 'Notes',
                   ),
                 ),
               ),
