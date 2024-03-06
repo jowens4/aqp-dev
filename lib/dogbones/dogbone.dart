@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:typed_data';
 
 class Dogbone {
   String timeStamp = '';
@@ -9,7 +8,7 @@ class Dogbone {
   TextEditingController width = TextEditingController();
   TextEditingController thickness = TextEditingController();
   TextEditingController fileName = TextEditingController();
-  Uint8List fileData = Uint8List(0);
+  String fileData = '';
 
   Dogbone({
     required String number,

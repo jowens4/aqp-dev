@@ -17,7 +17,6 @@ class _EnterDogbonesPageState extends State<EnterDogbonesPage> {
     try {
       final uri = Uri.parse(apiUrl);
       var request = http.MultipartRequest('POST', uri);
-
       // Add JSON data to the request
       request.fields['timestamp'] = dogbone.timeStamp;
       request.fields['number'] = dogbone.number.text;
@@ -26,25 +25,15 @@ class _EnterDogbonesPageState extends State<EnterDogbonesPage> {
       request.fields['width'] = dogbone.width.text;
       request.fields['thickness'] = dogbone.thickness.text;
       request.fields['file_name'] = dogbone.fileName.text;
-
-      // Add file data to the request
-      request.files.add(http.MultipartFile.fromBytes(
-        'file_data',
-        dogbone.fileData,
-        filename: dogbone.fileName.text,
-      ));
-
-      print(dogbone.fileData);
+      request.fields['file_data'] = dogbone.fileData;
 
       print("Body: ${request.fields}");
-      print("Files: ${request.files.first.field}");
       final response = await request.send();
 
       if (response.statusCode == 200) {
         print("Dogbone created successfully");
       } else {
         print("Error creating dogbone. Status code: ${response.statusCode}");
-        print("error: ${request.files}");
       }
     } catch (e) {
       print("Error during POST request: $e");
@@ -103,7 +92,12 @@ class _EnterDogbonesPageState extends State<EnterDogbonesPage> {
             child: ListView.builder(
               itemCount: dogboneWidgets.length,
               itemBuilder: (context, index) {
-                return DogboneWidget(dogbone: dogboneWidgets[index].dogbone);
+                return DogboneWidget(
+                  dogbone: dogboneWidgets[index].dogbone,
+                  cardColor: index.isEven
+                      ? Colors.grey.shade300
+                      : Colors.grey.shade400,
+                );
               },
             ),
           ),

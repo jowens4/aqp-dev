@@ -1,13 +1,12 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:file_picker/src/file_picker.dart';
 import 'package:aqp_dev/dogbones/dogbone.dart';
 
 class DogboneWidget extends StatefulWidget {
   final Dogbone dogbone;
+  final Color? cardColor;
 
-  DogboneWidget({required this.dogbone});
-
+  DogboneWidget({required this.dogbone, this.cardColor});
   @override
   _DogboneState createState() => _DogboneState();
 }
@@ -16,6 +15,7 @@ class _DogboneState extends State<DogboneWidget> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: widget.cardColor,
       child: Padding(
         padding: const EdgeInsets.all(1.0),
         child: Row(
@@ -155,7 +155,8 @@ class _DogboneState extends State<DogboneWidget> {
 
                     if (picked != null) {
                       widget.dogbone.fileName.text = picked.files.first.name;
-                      widget.dogbone.fileData = picked.files.first.bytes!;
+                      widget.dogbone.fileData =
+                          picked.files.first.bytes.toString();
                       widget.dogbone.timeStamp = DateTime.now().toString();
                     }
                   },
