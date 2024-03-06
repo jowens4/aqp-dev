@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:aqp_dev/dogbones/dogbone.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:aqp_dev/dogbones/dogbone_widget.dart';
+import 'package:aqp_dev/dogbones/dogbone.dart';
 
 class EnterDogbonesPage extends StatefulWidget {
   @override
@@ -9,46 +9,42 @@ class EnterDogbonesPage extends StatefulWidget {
 }
 
 class _EnterDogbonesPageState extends State<EnterDogbonesPage> {
-  List<DogboneData> dogbonesData = []; // List to store data for each dog bone
+  List<DogboneWidget> dogboneWidgets = [];
 
-  Future<void> createDogbone(
-    String id,
-    String timestamp,
-    String number,
-    String note,
-    String length,
-    String width,
-    String thickness,
-    String file,
-  ) async {
-    const String apiUrl = 'http://aqp:8080/dogbone/';
-
-    Map<String, String> requestBody = {
-      "id": id,
-      "timestamp": timestamp,
-      "number": number,
-      "note": note,
-      "length": length,
-      "width": width,
-      "thickness": thickness,
-      "files": file,
-    };
+  Future<void> createDogbone(Dogbone dogbone) async {
+    const String apiUrl = 'http://aqp:8080/dogbones/';
 
     try {
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: <String, String>{
-          'accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(requestBody),
-      );
+      final uri = Uri.parse(apiUrl);
+      var request = http.MultipartRequest('POST', uri);
+
+      // Add JSON data to the request
+      request.fields['timestamp'] = dogbone.timeStamp;
+      request.fields['number'] = dogbone.number.text;
+      request.fields['note'] = dogbone.note.text;
+      request.fields['length'] = dogbone.length.text;
+      request.fields['width'] = dogbone.width.text;
+      request.fields['thickness'] = dogbone.thickness.text;
+      request.fields['file_name'] = dogbone.fileName.text;
+
+      // Add file data to the request
+      request.files.add(http.MultipartFile.fromBytes(
+        'file_data',
+        dogbone.fileData,
+        filename: dogbone.fileName.text,
+      ));
+
+      print(dogbone.fileData);
+
+      print("Body: ${request.fields}");
+      print("Files: ${request.files.first.field}");
+      final response = await request.send();
 
       if (response.statusCode == 200) {
-        print("User created successfully");
+        print("Dogbone created successfully");
       } else {
-        print("Error creating user. Status code: ${response.statusCode}");
-        print("Response body: ${response.body}");
+        print("Error creating dogbone. Status code: ${response.statusCode}");
+        print("error: ${request.files}");
       }
     } catch (e) {
       print("Error during POST request: $e");
@@ -70,11 +66,11 @@ class _EnterDogbonesPageState extends State<EnterDogbonesPage> {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  // Add a new dog bone
+                  // Add a new dog bone widget
                   setState(() {
-                    dogbonesData.add(DogboneData(
-                      numberController: TextEditingController(
-                        text: (dogbonesData.length + 1).toString(),
+                    dogboneWidgets.add(DogboneWidget(
+                      dogbone: Dogbone(
+                        number: (dogboneWidgets.length + 1).toString(),
                       ),
                     ));
                   });
@@ -83,10 +79,10 @@ class _EnterDogbonesPageState extends State<EnterDogbonesPage> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  // Remove the last dog bone
-                  if (dogbonesData.isNotEmpty) {
+                  // Remove the last dog bone widget
+                  if (dogboneWidgets.isNotEmpty) {
                     setState(() {
-                      dogbonesData.removeLast();
+                      dogboneWidgets.removeLast();
                     });
                   }
                 },
@@ -94,15 +90,10 @@ class _EnterDogbonesPageState extends State<EnterDogbonesPage> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  createDogbone(
-                      dogbonesData[0].numberController.text,
-                      dogbonesData[0].numberController.text,
-                      dogbonesData[0].numberController.text,
-                      dogbonesData[0].noteController.text,
-                      dogbonesData[0].lengthController.text,
-                      dogbonesData[0].widthController.text,
-                      dogbonesData[0].thicknessController.text,
-                      dogbonesData[0].fileController.text);
+                  // Submit the first dog bone widget
+                  if (dogboneWidgets.isNotEmpty) {
+                    createDogbone(dogboneWidgets[0].dogbone);
+                  }
                 },
                 child: Text('Submit'),
               ),
@@ -110,19 +101,9 @@ class _EnterDogbonesPageState extends State<EnterDogbonesPage> {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: dogbonesData.length,
+              itemCount: dogboneWidgets.length,
               itemBuilder: (context, index) {
-                return Dogbone(
-                    numberController: dogbonesData[index].numberController,
-                    noteController: dogbonesData[index].noteController,
-                    lengthController: dogbonesData[index].lengthController,
-                    widthController: dogbonesData[index].widthController,
-                    thicknessController:
-                        dogbonesData[index].thicknessController,
-                    fileController: dogbonesData[index].fileController,
-                    cardColor: index.isEven
-                        ? Colors.grey.shade300
-                        : Colors.grey.shade400);
+                return DogboneWidget(dogbone: dogboneWidgets[index].dogbone);
               },
             ),
           ),
@@ -130,16 +111,4 @@ class _EnterDogbonesPageState extends State<EnterDogbonesPage> {
       ),
     );
   }
-}
-
-class DogboneData {
-  TextEditingController numberController = TextEditingController();
-  TextEditingController noteController = TextEditingController();
-
-  TextEditingController lengthController = TextEditingController();
-  TextEditingController widthController = TextEditingController();
-  TextEditingController thicknessController = TextEditingController();
-  TextEditingController fileController = TextEditingController();
-
-  DogboneData({required this.numberController});
 }
